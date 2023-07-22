@@ -1,0 +1,50 @@
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+}
+
+:root {
+    --cell-size: 140px;
+    --letter-size: calc(var(--cell-size) * .8);
+}
+
+body {
+    margin: 0;
+    background-color: black;
+}
+
+.title {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 90px;
+    color: white;
+}
+
+#players,
+#controls {
+    display: flex;
+    justify-content: center;
+}
+
+#gameBoard {
+    width: 100vw;
+    height: 50vh;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+    grid-template-columns: repeat(3, auto);
+    gap: 5px;
+}
+
+.cell {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    background-color: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
