@@ -1,5 +1,5 @@
 const Gameboard = (() => {
-    let gameboard = ['', '', '', '', '', '', '', '', ''];
+    let gameboard = ['X', 'O', 'X', 'O', 'X', 'O', 'X', 'O', 'X'];
 
     const render = () => {
         let gameboardHTML = '';
@@ -13,17 +13,25 @@ const Gameboard = (() => {
     }
 })();
 
-const players = (name, mark) => {
+Gameboard.render() //temp auto start
+
+const startGame = (() => {
+    const players = [
+        createPlayer(document.getElementById('player1').value, 'X'),
+        createPlayer(document.getElementById('player2').value, 'O'),
+    ]
+    Gameboard.render();
+})
+
+const startBtn = document.getElementById('startBtn');
+startBtn.addEventListener('click', startGame);
+
+const createPlayer = (name, mark) => {
     return {
         name,
         mark
     }
 }
-
-const startBtn = document.getElementById('startBtn');
-startBtn.addEventListener('click', () => {
-    Gameboard.render();
-})
 
 const GameFlow = (() => {
     //check player
