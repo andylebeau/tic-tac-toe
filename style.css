@@ -6,7 +6,7 @@
 
 :root {
     --cell-size: 140px;
-    --letter-size: calc(var(--cell-size) * .8);
+    --mark-size: calc(var(--cell-size) * .8);
 }
 
 body {
@@ -21,8 +21,7 @@ body {
     color: white;
 }
 
-#players,
-#controls {
+#players,#controls {
     display: flex;
     justify-content: center;
 }
@@ -47,4 +46,5 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: var(--mark-size);
 }
