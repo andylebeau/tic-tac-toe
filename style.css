@@ -1,39 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Lumanosimo&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;1,600&family=Indie+Flower&family=Manrope:wght@400;600&display=swap');
+
 *,
 *::after,
 *::before {
     box-sizing: border-box;
 }
 
+html {
+    font-size: 30px;
+}
+
 :root {
-    --cell-size: 140px;
-    --mark-size: calc(var(--cell-size) * .8);
+    --cell-size: 160px;
+    --mark-size: calc(var(--cell-size) * 1.1);
 }
 
 body {
     margin: 0;
+    padding: 0;
+    text-align: center;
     background-color: black;
+    color: white;
+    font-family: 'Lumanosimo', sans-serif;
 }
 
 .title {
     text-align: center;
     margin-top: 50px;
-    font-size: 90px;
-    color: white;
-}
-
-#players,#controls {
-    display: flex;
-    justify-content: center;
+    font-size: 2.5rem;
 }
 
 #gameBoard {
-    width: 100vw;
-    height: 50vh;
     display: grid;
     justify-content: center;
     align-content: center;
-    justify-items: center;
-    align-items: center;
     grid-template-columns: repeat(3, auto);
     gap: 5px;
 }
@@ -41,10 +42,34 @@ body {
 .cell {
     width: var(--cell-size);
     height: var(--cell-size);
+    display: grid;
+    justify-content: center;
+    align-content: center;
     background-color: white;
     cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     font-size: var(--mark-size);
+    color: black;
+    font-family: 'Indie Flower', sans-serif;
+    overflow-y: hidden;
+}
+
+/* #messageText {
+    color: white;
+} */
+
+button {
+    appearance: none;
+    border: none;
+    border-radius: 10px;
+    width: 200px;
+    height: 50px;
+    font-size: 1rem;
+    background-color: green;
+    color: white;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: white;
+    color: green;
 }
