@@ -58,8 +58,6 @@ const GameFlow = (() => {
 
   function updateCell(cell, index) {
     currentPlayer === 'X' ? xArray.push(+index) : oArray.push(+index)
-    console.log(xArray)
-    console.log(oArray)
     currentBoard[index] = currentPlayer;
     cell.textContent = currentPlayer;
   }
@@ -71,12 +69,11 @@ const GameFlow = (() => {
 
   function checkWinner() {
     if (!currentBoard.includes('')) { return messageWinner('Draw!') }
-    else if (winningArrays.some(possibleWin => possibleWin
-                          .every(cellIndex => xArray.includes(cellIndex))))
-                          {return messageWinner(`${currentPlayer} Wins!`)}
-    else if (winningArrays.some(possibleWin => possibleWin
-                          .every(cellIndex => oArray.includes(cellIndex))))
-                          {return messageWinner(`${currentPlayer} Wins!`)}
+    let currentPlayerArray = [];
+    currentPlayer == 'X' ? currentPlayerArray = xArray.slice() : currentPlayerArray = oArray.slice();
+    if (winningArrays.some(possibleWin => possibleWin
+                     .every(cellIndex => currentPlayerArray.includes(cellIndex))))
+                    {return messageWinner(`${currentPlayer} Wins!`)}
     else {changePlayer()}
   }
 
