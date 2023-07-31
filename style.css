@@ -25,10 +25,25 @@ body {
     font-family: 'Lumanosimo', sans-serif;
 }
 
+#gameContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+}
+
 .title {
-    text-align: center;
     margin-top: 50px;
     font-size: 2.5rem;
+}
+
+input {
+    width: 10rem;
+    font-size: 1rem;
+}
+
+#messageText {
+    font-size: 1.5rem;
 }
 
 #gameBoard {
@@ -42,20 +57,16 @@ body {
 .cell {
     width: var(--cell-size);
     height: var(--cell-size);
-    display: grid;
+    display: flex;
     justify-content: center;
-    align-content: center;
+    align-items: center;
     background-color: white;
     cursor: pointer;
     font-size: var(--mark-size);
-    color: black;
     font-family: 'Indie Flower', sans-serif;
+    color: black;
     overflow-y: hidden;
 }
-
-/* #messageText {
-    color: white;
-} */
 
 button {
     appearance: none;

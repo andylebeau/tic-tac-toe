@@ -1,96 +1,116 @@
 const Gameboard = (() => {
-  const _starterBoard = Array.from({length: 9}).fill('');
-  let _gameboardHTML = '';
+  const currentBoard = Array.from({length: 9}).fill('');
+  let xArray = []
+  let oArray = []
 
-  const createBoard = () => {
-    _starterBoard.forEach((cellValue, index) => {
+  const render = () => {
+    let _gameboardHTML = '';
+    currentBoard.forEach((cellValue, index) => {
       _gameboardHTML += `<div id="${index}" class="cell">${cellValue}</div>`
     })
     document.querySelector('#gameBoard').innerHTML = _gameboardHTML;
+
+    const cells = document.querySelectorAll('.cell');
+    cells.forEach((cell) => {
+      cell.addEventListener('click', GameFlow.clickCell)
+    })
   }
+
+  const updateCells = (mark, index) => {
+    if (xArray.concat(oArray).includes(index)) { return }
+    mark === 'X' ? xArray.push(+index) : oArray.push(+index)
+    currentBoard[index] = mark;
+    render()
+  }
+
+  const getXandOarrays = () => {
+    return {
+      xArray,
+      oArray
+    }
+  }
+
   return {
-      createBoard
+      render,
+      updateCells,
+      getXandOarrays
   }
 })();
 
-Gameboard.createBoard() // temp quick start
+const createPlayer = (name, mark) => {
+  return {
+    name,
+    mark
+  }
+};
 
 const GameFlow = (() => {
-  const cells = document.querySelectorAll('.cell');
-  const messageText = document.querySelector('#messageText');
-  const multiBtn = document.querySelector('#multiBtn');
-  const winningArrays = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-  ];
+  let players = []
+  let currentPlayerIndex;
+  let activeGame;
 
-  let currentBoard = Array.from({length: 9}).fill('');
-  let currentPlayer = 'X';
-  let xArray = []
-  let oArray = []
-  let activeGame = false;
-
-  initializeGame();
-
-  function initializeGame() {
-    cells.forEach(cell => cell.addEventListener('click', clickCell));
-    multiBtn.addEventListener('click', restartGame);
-    messageText.textContent = `${currentPlayer}'s turn`;
+  const start = () => {
+    players = [
+    createPlayer(document.querySelector('#player1').value, 'X'),
+    createPlayer(document.querySelector('#player2').value, 'O')
+   ]
+    currentPlayerIndex = 0;
     activeGame = true;
+    Gameboard.render();
+    const cells = document.querySelectorAll('.cell');
+    cells.forEach((cell) => {
+      cell.addEventListener('click', clickCell)
+    })
   }
 
-  function clickCell() {
-    const cellIndex = this.getAttribute('id');
-
-    if(currentBoard[cellIndex] != '' || !activeGame) {
-        return;
-    }
-
-    updateCell(this, cellIndex);
+  const clickCell =(e) => {
+    if (!activeGame) {return}
+    let index = +e.target.id;
+    Gameboard.updateCells(players[currentPlayerIndex].mark, index)
     checkWinner();
   }
 
-  function updateCell(cell, index) {
-    currentPlayer === 'X' ? xArray.push(+index) : oArray.push(+index)
-    currentBoard[index] = currentPlayer;
-    cell.textContent = currentPlayer;
-  }
-
   function changePlayer() {
-    currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
-    messageText.textContent = `${currentPlayer}'s turn`;
+    currentPlayerIndex = currentPlayerIndex === 0 ? 1 : 0;
+    messageText.textContent = `${players[currentPlayerIndex].name}'s turn`;
   }
 
   function checkWinner() {
-    if (!currentBoard.includes('')) { return messageWinner('Draw!') }
+    const winningArrays = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
+    ];
+    const xS = Gameboard.getXandOarrays().xArray
+    const oS = Gameboard.getXandOarrays().oArray
+
+    if (xS.concat(oS).length === 9) { return messageWinner('Draw!') }
     let currentPlayerArray = [];
-    currentPlayer == 'X' ? currentPlayerArray = xArray.slice() : currentPlayerArray = oArray.slice();
+    currentPlayerIndex == 0 ? currentPlayerArray = xS.slice() : currentPlayerArray = oS.slice();
     if (winningArrays.some(possibleWin => possibleWin
                      .every(cellIndex => currentPlayerArray.includes(cellIndex))))
-                    {return messageWinner(`${currentPlayer} Wins!`)}
-    else {changePlayer()}
+                    { return messageWinner(`${players[currentPlayerIndex].name} Won!`) }
+    else { changePlayer() }
   }
 
   function messageWinner(winnerIs) {
-    activeGame = false;
     messageText.textContent = winnerIs;
+    multiBtn.textContent = "Play Again!"
+    activeGame = false;
   }
-
-  function restartGame() {
-    currentPlayer = "X";
-    currentBoard = ['', '', '', '', '', '', '', '', ''];
-    messageText.textContent = `${currentPlayer}'s turn`;
-    multiBtn.textContent = 'Restart';
-    cells.forEach(cell => cell.textContent = '');
-    activeGame = true;
-    xArray = [];
-    oArray = [];
+  return{
+    start,
+    clickCell
   }
+})();
 
-})()
+const multiBtn = document.querySelector("#multiBtn");
+multiBtn.addEventListener('click', () => {
+    GameFlow.start()
+    multiBtn.textContent = 'Restart'
+})
