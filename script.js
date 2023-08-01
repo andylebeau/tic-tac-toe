@@ -1,7 +1,5 @@
 const Gameboard = (() => {
-  const currentBoard = Array.from({length: 9}).fill('');
-  let xArray = []
-  let oArray = []
+  let currentBoard = Array.from({length: 9}).fill('');
 
   const render = () => {
     let _gameboardHTML = '';
@@ -17,23 +15,16 @@ const Gameboard = (() => {
   }
 
   const updateCells = (mark, index) => {
-    if (xArray.concat(oArray).includes(index)) { return }
-    mark === 'X' ? xArray.push(+index) : oArray.push(+index)
     currentBoard[index] = mark;
-    render()
+    render();
   }
 
-  const getXandOarrays = () => {
-    return {
-      xArray,
-      oArray
-    }
-  }
+  const getBoard = () => currentBoard;
 
   return {
       render,
       updateCells,
-      getXandOarrays
+      getBoard
   }
 })();
 
@@ -56,11 +47,13 @@ const GameFlow = (() => {
    ]
     currentPlayerIndex = 0;
     activeGame = true;
-    Gameboard.render();
+    const board = Array.from({length: 9}).fill('');
+    Gameboard.render(board);
     const cells = document.querySelectorAll('.cell');
     cells.forEach((cell) => {
       cell.addEventListener('click', clickCell)
     })
+    messageText.textContent = `${players[0].name}'s turn`
   }
 
   const clickCell =(e) => {
@@ -86,10 +79,14 @@ const GameFlow = (() => {
       [0, 4, 8],
       [2, 4, 6]
     ];
-    const xS = Gameboard.getXandOarrays().xArray
-    const oS = Gameboard.getXandOarrays().oArray
 
-    if (xS.concat(oS).length === 9) { return messageWinner('Draw!') }
+    if (!Gameboard.getBoard().includes('')) { return messageWinner('Draw!') }
+    let xS = [];
+    let oS = [];
+    Gameboard.getBoard().forEach((mark, i) => {
+      if (mark === 'X') { xS.push(+i) }
+      if (mark === 'O') { oS.push(+i) }
+    })
     let currentPlayerArray = [];
     currentPlayerIndex == 0 ? currentPlayerArray = xS.slice() : currentPlayerArray = oS.slice();
     if (winningArrays.some(possibleWin => possibleWin
@@ -103,6 +100,7 @@ const GameFlow = (() => {
     multiBtn.textContent = "Play Again!"
     activeGame = false;
   }
+
   return{
     start,
     clickCell
@@ -111,6 +109,17 @@ const GameFlow = (() => {
 
 const multiBtn = document.querySelector("#multiBtn");
 multiBtn.addEventListener('click', () => {
-    GameFlow.start()
-    multiBtn.textContent = 'Restart'
+    if (multiBtn.textContent === 'Restart' || multiBtn.textContent === 'Play Again!') {
+      console.log('restart')
+      Gameboard.getBoard().forEach((_, index) => {
+        Gameboard.updateCells('', index)
+      })
+      Gameboard.render();
+      GameFlow.start();
+    }
+    else {
+      console.log('start')
+      GameFlow.start();
+    }
+    multiBtn.textContent = 'Restart';
 })
