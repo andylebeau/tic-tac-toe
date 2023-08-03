@@ -28,7 +28,8 @@ const Gameboard = (() => {
   }
 })();
 
-const createPlayer = (name, mark) => {
+const createPlayer = (name, mark, num) => {
+  if (!name) {name = `Player ${num}`}
   return {
     name,
     mark
@@ -42,14 +43,14 @@ const GameFlow = (() => {
   let isPlayer2AI = false;
 
   const start = () => {
-    players = [createPlayer(document.querySelector('#player1').value, 'X'),
-               createPlayer(document.querySelector('#player2').value, 'O')];
+    players = [createPlayer(document.querySelector('#player1').value, 'X', 1),
+               createPlayer(document.querySelector('#player2').value, 'O', 2)];
     currentPlayerIndex = 0;
     activeGame = true;
+
     if (players[1].name.toUpperCase() === 'AI') { isPlayer2AI = true }
 
-    const board = Array.from({length: 9}).fill('');
-    Gameboard.render(board);
+    Gameboard.render();
 
     const cells = document.querySelectorAll('.cell');
     cells.forEach((cell) => {
@@ -72,12 +73,11 @@ const GameFlow = (() => {
     let aiMoveIndex;
     Gameboard.getBoard().forEach((value, index) => {
       if (value === '') {
-        possibleAiMoves.push(+index)
+        possibleAiMoves.push(+index);
       }
     })
-    console.log(possibleAiMoves)
     aiRandom = Math.floor(Math.random() * possibleAiMoves.length);
-    aiMoveIndex = possibleAiMoves[aiRandom]
+    aiMoveIndex = possibleAiMoves[aiRandom];
     Gameboard.updateCells(players[currentPlayerIndex].mark, aiMoveIndex);
   }
 
@@ -146,6 +146,9 @@ multiBtn.addEventListener('click', () => {
   multiBtn.textContent = 'Restart';
 })
 
-// function aiUnbeatable (availableCells, player) {
-
-// }
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    Gameboard.render();
+    GameFlow.start();
+  }
+})
