@@ -4,13 +4,13 @@ const Gameboard = (() => {
   const render = () => {
     let _gameboardHTML = '';
     currentBoard.forEach((cellValue, index) => {
-      _gameboardHTML += `<div id="${index}" class="cell">${cellValue}</div>`
+      _gameboardHTML += `<div id="${index}" class="cell">${cellValue}</div>`;
     })
     document.querySelector('#gameBoard').innerHTML = _gameboardHTML;
 
     const cells = document.querySelectorAll('.cell');
     cells.forEach((cell) => {
-      cell.addEventListener('click', GameFlow.clickCell)
+      cell.addEventListener('click', GameFlow.clickCell);
     })
   }
 
@@ -36,35 +36,57 @@ const createPlayer = (name, mark) => {
 };
 
 const GameFlow = (() => {
-  let players = []
+  let players = [];
   let currentPlayerIndex;
   let activeGame;
+  let isPlayer2AI = false;
 
   const start = () => {
-    players = [
-    createPlayer(document.querySelector('#player1').value, 'X'),
-    createPlayer(document.querySelector('#player2').value, 'O')
-   ]
+    players = [createPlayer(document.querySelector('#player1').value, 'X'),
+               createPlayer(document.querySelector('#player2').value, 'O')];
     currentPlayerIndex = 0;
     activeGame = true;
+    if (players[1].name.toUpperCase() === 'AI') { isPlayer2AI = true }
+
     const board = Array.from({length: 9}).fill('');
     Gameboard.render(board);
+
     const cells = document.querySelectorAll('.cell');
     cells.forEach((cell) => {
-      cell.addEventListener('click', clickCell)
+      cell.addEventListener('click', clickCell);
     })
-    messageText.textContent = `${players[0].name}'s turn`
+
+    messageText.textContent = `${players[0].name}'s turn`;
   }
 
-  const clickCell =(e) => {
-    if (!activeGame) {return}
+  const clickCell = (e) => {
+    if (!activeGame) { return };
     let index = +e.target.id;
-    Gameboard.updateCells(players[currentPlayerIndex].mark, index)
+    Gameboard.updateCells(players[currentPlayerIndex].mark, index);
     checkWinner();
   }
 
+  // function aiMove() {
+  //   let possibleAiMoves = [];
+  //   let aiRandom;
+  //   let aiMoveIndex;
+  //   Gameboard.getBoard().forEach((value, index) => {
+  //     if (value === '') {
+  //       possibleAiMoves.push(+index)
+  //     }
+  //   })
+  //   console.log(possibleAiMoves)
+  //   aiRandom = Math.floor(Math.random() * possibleAiMoves.length);
+  //   aiMoveIndex = possibleAiMoves[aiRandom]
+  //   Gameboard.updateCells(players[currentPlayerIndex].mark, aiMoveIndex);
+  //   checkWinner();
+  // }
+
   function changePlayer() {
     currentPlayerIndex = currentPlayerIndex === 0 ? 1 : 0;
+    // if (isPlayer2AI && currentPlayerIndex === 1) {
+    //   aiMove()
+    // }
     messageText.textContent = `${players[currentPlayerIndex].name}'s turn`;
   }
 
@@ -79,25 +101,27 @@ const GameFlow = (() => {
       [0, 4, 8],
       [2, 4, 6]
     ];
-
-    if (!Gameboard.getBoard().includes('')) { return messageWinner('Draw!') }
     let xS = [];
     let oS = [];
+    let currentPlayerArray = [];
+
+    if (!Gameboard.getBoard().includes('')) { return messageWinner('Draw!') }
+
     Gameboard.getBoard().forEach((mark, i) => {
       if (mark === 'X') { xS.push(+i) }
       if (mark === 'O') { oS.push(+i) }
     })
-    let currentPlayerArray = [];
+
     currentPlayerIndex == 0 ? currentPlayerArray = xS.slice() : currentPlayerArray = oS.slice();
     if (winningArrays.some(possibleWin => possibleWin
                      .every(cellIndex => currentPlayerArray.includes(cellIndex))))
-                    { return messageWinner(`${players[currentPlayerIndex].name} Won!`) }
+                   { return messageWinner(`${players[currentPlayerIndex].name} Won!`) }
     else { changePlayer() }
   }
 
   function messageWinner(winnerIs) {
     messageText.textContent = winnerIs;
-    multiBtn.textContent = "Play Again!"
+    multiBtn.textContent = "Play Again!";
     activeGame = false;
   }
 
@@ -109,17 +133,19 @@ const GameFlow = (() => {
 
 const multiBtn = document.querySelector("#multiBtn");
 multiBtn.addEventListener('click', () => {
-    if (multiBtn.textContent === 'Restart' || multiBtn.textContent === 'Play Again!') {
-      console.log('restart')
-      Gameboard.getBoard().forEach((_, index) => {
-        Gameboard.updateCells('', index)
-      })
-      Gameboard.render();
-      GameFlow.start();
-    }
-    else {
-      console.log('start')
-      GameFlow.start();
-    }
-    multiBtn.textContent = 'Restart';
+  if (multiBtn.textContent === 'Restart' || multiBtn.textContent === 'Play Again!') {
+    Gameboard.getBoard().forEach((_, index) => {
+    Gameboard.updateCells('', index);
+  })
+    Gameboard.render();
+    GameFlow.start();
+  }
+  else {
+    GameFlow.start();
+  }
+  multiBtn.textContent = 'Restart';
 })
+
+// function aiUnbeatable (availableCells, player) {
+
+// }
