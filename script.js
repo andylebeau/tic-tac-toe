@@ -66,28 +66,28 @@ const GameFlow = (() => {
     checkWinner();
   }
 
-  // function aiMove() {
-  //   let possibleAiMoves = [];
-  //   let aiRandom;
-  //   let aiMoveIndex;
-  //   Gameboard.getBoard().forEach((value, index) => {
-  //     if (value === '') {
-  //       possibleAiMoves.push(+index)
-  //     }
-  //   })
-  //   console.log(possibleAiMoves)
-  //   aiRandom = Math.floor(Math.random() * possibleAiMoves.length);
-  //   aiMoveIndex = possibleAiMoves[aiRandom]
-  //   Gameboard.updateCells(players[currentPlayerIndex].mark, aiMoveIndex);
-  //   checkWinner();
-  // }
+  function aiMove() {
+    let possibleAiMoves = [];
+    let aiRandom;
+    let aiMoveIndex;
+    Gameboard.getBoard().forEach((value, index) => {
+      if (value === '') {
+        possibleAiMoves.push(+index)
+      }
+    })
+    console.log(possibleAiMoves)
+    aiRandom = Math.floor(Math.random() * possibleAiMoves.length);
+    aiMoveIndex = possibleAiMoves[aiRandom]
+    Gameboard.updateCells(players[currentPlayerIndex].mark, aiMoveIndex);
+  }
 
   function changePlayer() {
     currentPlayerIndex = currentPlayerIndex === 0 ? 1 : 0;
-    // if (isPlayer2AI && currentPlayerIndex === 1) {
-    //   aiMove()
-    // }
     messageText.textContent = `${players[currentPlayerIndex].name}'s turn`;
+    if (isPlayer2AI && currentPlayerIndex === 1) {
+      aiMove()
+      checkWinner()
+    }
   }
 
   function checkWinner() {
