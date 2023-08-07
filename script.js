@@ -21,10 +21,19 @@ const Gameboard = (() => {
 
   const getBoard = () => currentBoard;
 
+  const getEmptyCells = () => {
+    let array = [];
+    Gameboard.getBoard().filter((value, i) => {
+      if (!value) { array.push(i) }
+    })
+    return array
+  }
+
   return {
       render,
       updateCells,
-      getBoard
+      getBoard,
+      getEmptyCells
   }
 })();
 
@@ -61,23 +70,18 @@ const GameFlow = (() => {
   }
 
   const clickCell = (e) => {
-    if (!activeGame) { return };
+    if (!activeGame || e.target.textContent != '') { return };
     let index = +e.target.id;
     Gameboard.updateCells(players[currentPlayerIndex].mark, index);
     checkWinner();
   }
 
   function aiMove() {
-    let possibleAiMoves = [];
+    let emptyCells = Gameboard.getEmptyCells();
     let aiRandom;
     let aiMoveIndex;
-    Gameboard.getBoard().forEach((value, index) => {
-      if (value === '') {
-        possibleAiMoves.push(+index);
-      }
-    })
-    aiRandom = Math.floor(Math.random() * possibleAiMoves.length);
-    aiMoveIndex = possibleAiMoves[aiRandom];
+    aiRandom = Math.floor(Math.random() * emptyCells.length);
+    aiMoveIndex = emptyCells[aiRandom];
     Gameboard.updateCells(players[currentPlayerIndex].mark, aiMoveIndex);
   }
 
@@ -105,8 +109,6 @@ const GameFlow = (() => {
     let oS = [];
     let currentPlayerArray = [];
 
-    if (!Gameboard.getBoard().includes('')) { return messageWinner('Draw!') }
-
     Gameboard.getBoard().forEach((mark, i) => {
       if (mark === 'X') { xS.push(+i) }
       if (mark === 'O') { oS.push(+i) }
@@ -116,6 +118,7 @@ const GameFlow = (() => {
     if (winningArrays.some(possibleWin => possibleWin
                      .every(cellIndex => currentPlayerArray.includes(cellIndex))))
                    { return messageWinner(`${players[currentPlayerIndex].name} Won!`) }
+    else if (!Gameboard.getBoard().includes('')) { return messageWinner('Draw!') }
     else { changePlayer() }
   }
 
@@ -148,7 +151,18 @@ multiBtn.addEventListener('click', () => {
 
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') {
-    Gameboard.render();
     GameFlow.start();
   }
 })
+
+function aiThinking(board, player) {
+  let base = {
+    X : -1,
+    O : 1,
+    Draw : 0
+  }
+  let bestScore = 0
+  let score = 0
+  const possibleMoves = Gameboard.getEmptyCells()
+  console.log(possibleMoves)
+}
